@@ -19,14 +19,16 @@ public class BlueScreenMod implements ClientModInitializer {
             "key.bluescreen.activate",
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_E,
-            "category.bluescreen.general"
+            "category.bluescreen.general",
+            true  // добавлен параметр boolean для repeatEvents
         ));
         
         resetKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
             "key.bluescreen.reset",
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_0,
-            "category.bluescreen.general"
+            "category.bluescreen.general",
+            true
         ));
         
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
