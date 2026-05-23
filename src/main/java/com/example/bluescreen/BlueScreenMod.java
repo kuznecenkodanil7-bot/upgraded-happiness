@@ -1,49 +1,46 @@
-package com.example.bluescreen.mixin;
+package com.example.bluescreen;
 
-import com.example.bluescreen.BlueScreenMod;
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.BuiltBuffer;
-import org.joml.Matrix4f;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
+import org.lwjgl.glfw.GLFW;
 
-@Mixin(GameRenderer.class)
-public class GameRendererMixin {
+public class BlueScreenMod implements ClientModInitializer {
     
-    @Inject(method = "render", at = @At("TAIL"))
-    private void onRender(float tickDelta, long startTime, boolean tick, CallbackInfo ci) {
-        if (BlueScreenMod.isBlueScreenActive()) {
-            MinecraftClient client = MinecraftClient.getInstance();
-            if (client.getWindow() != null && client.currentScreen == null) {
-                int width = client.getWindow().getScaledWidth();
-                int height = client.getWindow().getScaledHeight();
-                
-                RenderSystem.disableDepthTest();
-                RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-                
-                Matrix4f matrix = new Matrix4f().ortho(0, width, height, 0, -1, 1);
-                Tessellator tessellator = Tessellator.getInstance();
-                BufferBuilder buffer = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-                
-                buffer.vertex(matrix, 0, height, 0).color(0, 0, 170, 255);
-                buffer.vertex(matrix, width, height, 0).color(0, 0, 170, 255);
-                buffer.vertex(matrix, width, 0, 0).color(0, 0, 170, 255);
-                buffer.vertex(matrix, 0, 0, 0).color(0, 0, 170, 255);
-                
-                BuiltBuffer builtBuffer = buffer.end();
-                builtBuffer.draw();
-                
-                RenderSystem.enableDepthTest();
+    private static boolean blueScreenActive = false;
+    private static KeyBinding blueScreenKey;
+    private static KeyBinding resetKey;
+    
+    @Override
+    public void onInitializeClient() {
+        blueScreenKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+            "key.bluescreen.activate",
+            InputUtil.Type.KEYSYM,
+            GLFW.GLFW_KEY_E,
+            "category.bluescreen.general"
+        ));
+        
+        resetKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+            "key.bluescreen.reset",
+            InputUtil.Type.KEYSYM,
+            GLFW.GLFW_KEY_0,
+            "category.bluescreen.general"
+        ));
+        
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (blueScreenKey.wasPressed()) {
+                blueScreenActive = true;
             }
-        }
+            
+            if (resetKey.wasPressed()) {
+                blueScreenActive = false;
+            }
+        });
+    }
+    
+    public static boolean isBlueScreenActive() {
+        return blueScreenActive;
     }
 }
