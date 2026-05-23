@@ -9,6 +9,7 @@ import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BuiltBuffer;
+import net.minecraft.client.render.BufferRenderer;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -38,8 +39,7 @@ public class GameRendererMixin {
                 buffer.vertex(matrix, width, 0, 0).color(0, 0, 170, 255);
                 buffer.vertex(matrix, 0, 0, 0).color(0, 0, 170, 255);
                 
-                BuiltBuffer builtBuffer = buffer.end();
-                builtBuffer.draw();
+                BufferRenderer.drawWithGlobalProgram(buffer.end());
                 
                 RenderSystem.enableDepthTest();
             }
