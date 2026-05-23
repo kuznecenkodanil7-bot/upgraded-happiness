@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "bluescreen-mod",
+  "version": "${version}",
+  "name": "Blue Screen Mod",
+  "description": "Press E for Blue Screen of Death, 0 to restore",
+  "authors": ["YourName"],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/bluescreen-mod/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.example.bluescreen.BlueScreenMod"
+    ]
+  },
+  "mixins": [
+    "bluescreen-mod.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
