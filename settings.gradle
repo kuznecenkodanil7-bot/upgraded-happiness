@@ -6,4 +6,8 @@ pluginManagement {
     }
 }
 
+plugins {
+    id 'fabric-loom' version '1.10-SNAPSHOT' apply false
+}
+
 rootProject.name = 'bluescreen-mod'
